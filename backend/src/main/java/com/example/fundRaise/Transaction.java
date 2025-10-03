@@ -1,7 +1,6 @@
-package com.example.fundhorizon;
+package com.example.fundRaise;
 
 
-import com.example.fundhorizon.TransactionDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

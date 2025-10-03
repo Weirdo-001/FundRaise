@@ -1,4 +1,4 @@
-package com.example.fundhorizon;
+package com.example.fundRaise;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
