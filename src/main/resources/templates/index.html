@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Donation Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: var(--dark-gradient) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            background: var(--success-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background: var(--success-gradient);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8)), url('/images/hero-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .campaign-card {
+            border: none;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .campaign-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .campaign-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .campaign-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-img-top {
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .campaign-card:hover .card-img-top {
+            transform: scale(1.1);
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .card-text {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        .btn-donate {
+            background: var(--success-gradient);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-donate::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-donate:hover::before {
+            left: 100%;
+        }
+
+        .btn-donate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--secondary-gradient);
+            border-radius: 2px;
+        }
+
+        .stats-section {
+            background: var(--dark-gradient);
+            color: white;
+            padding: 4rem 0;
+            margin: 4rem 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--success-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+        }
+
+        footer {
+            background: var(--dark-gradient) !important;
+            padding: 3rem 0 2rem;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--success-gradient);
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        .social-links {
+            margin: 1rem 0;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #4facfe;
+            transform: translateY(-3px);
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(79, 172, 254, 0.1), rgba(0, 242, 254, 0.1));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-circle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-circle:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .floating-circle:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/"><i class="fas fa-heart me-2"></i>FundRaise</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/campaigns"><i class="fas fa-list me-1"></i>Campaigns</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/donations"><i class="fas fa-gift me-1"></i>My Donations</a></li>
+                    <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()') and #authentication.name == 'admin_hoon'}">
+                        <a class="nav-link" href="/dashboard"><i class="fas fa-user-shield me-1"></i>Admin</a>
+                    </li>
+                    <li class="nav-item" th:if="${not #authorization.expression('isAuthenticated()')}"><a class="nav-link" th:href="@{/login}"><i class="fas fa-sign-in-alt me-1"></i>Login</a></li>
+                    <li class="nav-item" th:if="${not #authorization.expression('isAuthenticated()')}"><a class="nav-link" th:href="@{/register}"><i class="fas fa-user-plus me-1"></i>Register</a></li>
+                    <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}"><form th:action="@{/logout}" method="post" style="display:inline"><button type="submit" class="nav-link btn btn-link" style="padding:0"><i class="fas fa-sign-out-alt me-1"></i>Logout</button></form></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-section">
+        <div class="container">
+            <div class="hero-content text-center text-white">
+                <h1 class="hero-title">Support Causes That Matter</h1>
+                <p class="hero-subtitle">Join hands to create a difference in the world, one donation at a time</p>
+                <div class="mt-4">
+                    <a href="#campaigns" class="btn btn-donate me-3">
+                        <i class="fas fa-heart me-2"></i>Start Donating
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="stats-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <span class="stat-number">$2.5M+</span>
+                        <div class="stat-label">Total Raised</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <span class="stat-number">15K+</span>
+                        <div class="stat-label">Happy Donors</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <span class="stat-number">200+</span>
+                        <div class="stat-label">Active Campaigns</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container my-5" id="campaigns">
+        <div class="section-title">
+            <h2>Featured Campaigns</h2>
+            <p class="lead text-muted">Discover amazing causes and make a meaningful impact</p>
+        </div>
+        
+        <div class="row">
+            <!-- Sample campaigns for demo -->
+            <div class="col-md-4 mb-4">
+                <div class="card campaign-card">
+                    <img src="/images/campaign1.jpg" class="card-img-top" alt="Education Campaign">
+                    <div class="card-body">
+                        <h5 class="card-title">Education for All Children</h5>
+                        <p class="card-text">Help provide quality education and school supplies to underprivileged children in rural areas.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="/donations/new/1" class="btn btn-donate">
+                                <i class="fas fa-donate me-2"></i>Donate Now
+                            </a>
+                            <small class="text-muted">$15,420 raised</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card campaign-card">
+                    <img src="/images/campaign2.jpg" class="card-img-top" alt="Environment Campaign">
+                    <div class="card-body">
+                        <h5 class="card-title">Save Our Forests</h5>
+                        <p class="card-text">Join our mission to plant trees and protect endangered forest ecosystems around the world.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="/donations/new/2" class="btn btn-donate">
+                                <i class="fas fa-donate me-2"></i>Donate Now
+                            </a>
+                            <small class="text-muted">$8,750 raised</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card campaign-card">
+                    <img src="/images/campaign3.jpg" class="card-img-top" alt="Healthcare Campaign">
+                    <div class="card-body">
+                        <h5 class="card-title">Medical Aid for Communities</h5>
+                        <p class="card-text">Provide essential medical care and supplies to communities lacking access to healthcare.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="/donations/new/3" class="btn btn-donate">
+                                <i class="fas fa-donate me-2"></i>Donate Now
+                            </a>
+                            <small class="text-muted">$22,100 raised</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Thymeleaf campaigns -->
+            <div class="col-md-4 mb-4" th:each="campaign : ${campaigns}">
+                <div class="card campaign-card">
+                    <img th:src="@{/images/campaign.jpg}" class="card-img-top" alt="Campaign">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${campaign.title}">Campaign Title</h5>
+                        <p class="card-text" th:text="${campaign.description}">Short description...</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a th:href="@{/donations/new/{id}(id=${campaign.id})}" class="btn btn-donate">
+                                <i class="fas fa-donate me-2"></i>Donate Now
+                            </a>
+                            <small class="text-muted" th:text="'$' + ${campaign.raised} + ' raised'">Amount raised</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-white">
+        <div class="container">
+            <div class="footer-content">
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+                <p class="mb-0">&copy; 2025 FundRaise | Built with Spring Boot + Thymeleaf | Making the world a better place</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

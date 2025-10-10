@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .dashboard-container {
+            background: rgba(255,255,255,0.97);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            margin-top: 40px;
+            padding: 40px;
+        }
+        .dashboard-title {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #667eea;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .table th {
+            background: #667eea;
+            color: white;
+        }
+        .table td, .table th {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/"><i class="fas fa-heart me-2"></i>FundRaise</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/campaigns"><i class="fas fa-list me-1"></i>Campaigns</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/donations"><i class="fas fa-gift me-1"></i>My Donations</a></li>
+                    <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()') and #authentication.name == 'admin_hoon'}">
+                        <a class="nav-link" href="/dashboard"><i class="fas fa-user-shield me-1"></i>Admin</a>
+                    </li>
+                    <li class="nav-item" th:if="${not #authorization.expression('isAuthenticated()')}"><a class="nav-link" th:href="@{/login}"><i class="fas fa-sign-in-alt me-1"></i>Login</a></li>
+                    <li class="nav-item" th:if="${not #authorization.expression('isAuthenticated()')}"><a class="nav-link" th:href="@{/register}"><i class="fas fa-user-plus me-1"></i>Register</a></li>
+                    <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}"><form th:action="@{/logout}" method="post" style="display:inline"><button type="submit" class="nav-link btn btn-link" style="padding:0"><i class="fas fa-sign-out-alt me-1"></i>Logout</button></form></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container dashboard-container" style="margin-top: 100px;">
+        <div class="dashboard-title">Admin Dashboard</div>
+        <div class="section-title d-flex justify-content-between align-items-center">
+            <span>All Users</span>
+            <a href="/users/new" class="btn btn-success btn-sm">Add User</a>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="u : ${users}">
+                    <td th:text="${u.id}">1</td>
+                    <td th:text="${u.username}">username</td>
+                    <td th:text="${u.email}">email</td>
+                    <td>
+                        <a th:href="@{'/users/edit/' + ${u.id}}" class="btn btn-primary btn-sm">Edit</a>
+                        <a th:href="@{'/users/delete/' + ${u.id}}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this user?')">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="section-title d-flex justify-content-between align-items-center">
+            <span>All Campaigns</span>
+            <a href="/campaigns/new" class="btn btn-success btn-sm">Add Campaign</a>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Goal</th>
+                    <th>Collected</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="c : ${campaigns}">
+                    <td th:text="${c.id}">1</td>
+                    <td th:text="${c.title}">title</td>
+                    <td th:text="${c.description}">desc</td>
+                    <td th:text="${c.goalAmount}">goal</td>
+                    <td th:text="${c.collectedAmount}">collected</td>
+                    <td>
+                        <a th:href="@{'/campaigns/edit/' + ${c.id}}" class="btn btn-primary btn-sm">Edit</a>
+                        <a th:href="@{'/campaigns/delete/' + ${c.id}}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this campaign?')">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">All Donations</div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Donor</th>
+                    <th>Amount</th>
+                    <th>Campaign</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="d : ${donations}">
+                    <td th:text="${d.id}">1</td>
+                    <td th:text="${d.donorName}">donor</td>
+                    <td th:text="${d.amount}">$100</td>
+                    <td th:text="${d.campaign.title}">Campaign Title</td>
+                    <td>
+                        <a th:href="@{'/donations/edit/' + ${d.id}}" class="btn btn-primary btn-sm">Edit</a>
+                        <a th:href="@{'/donations/delete/' + ${d.id}}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this donation?')">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

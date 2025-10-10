@@ -1,0 +1,20 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Admin Dashboard</title></head>
+<body>
+<h1>Admin Dashboard</h1>
+<h2>Users</h2>
+<ul>
+<th:block th:each="u : ${users}">
+<li th:text="${u.username}">username</li>
+</th:block>
+</ul>
+<h2>Donations</h2>
+<ul>
+<th:block th:each="d : ${donations}">
+<li th:text="${d.id}">donation id</li>
+<li th:text="${d.amount}">amount</li>
+</th:block>
+</ul>
+</body>
+</html>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal" created-in="IU-252.25557.131">
+    <data-source name="donationdb@localhost" uuid="c234ca3a-c1f3-4b07-ac36-ec8c307c451a">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MYSQL" />
+      <user-name>donation_user</user-name>
+      <schema-mapping />
+    </data-source>
+  </component>
+</project>
